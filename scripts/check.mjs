@@ -8,7 +8,8 @@ const required = [
   'lib/capability-receipt.mjs',
   'LICENSE',
   'README.md',
-  'README.zh-CN.md'
+  'README.zh-CN.md',
+  'test/fixtures/pack-agent-upstream.json'
 ]
 
 await Promise.all(required.map((file) => access(file)))

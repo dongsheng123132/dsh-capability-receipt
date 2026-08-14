@@ -1,0 +1,24 @@
+{
+  "schema": "agent-pack/lock/v1",
+  "packName": "receipt-smoke",
+  "packVersion": "0.1.0",
+  "packContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "lockedAt": "2026-08-14T00:00:00.000Z",
+  "agentPackCli": "0.1.0",
+  "components": {
+    "skills": {
+      "runtime-proof": {
+        "version": "1.2.3",
+        "contentHash": "sha256:47681252742bf479cdc60ac5bab695b25f54390168840f53cd0969c5ff9ca53e",
+        "ref": "C:/private/source/that-must-not-enter-the-receipt",
+        "fileCount": 2
+      }
+    },
+    "rules": {},
+    "mcp": {},
+    "experiences": {},
+    "hooks": {},
+    "subagents": {},
+    "memory": {}
+  }
+}

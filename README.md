@@ -2,14 +2,31 @@
 
 `dsh-capability-receipt` proves which skill DeepSeek Harness actually loaded. It hashes the effective instruction body returned by `ctx.skills.get()`, records the winning provider/source/invocation policy, and—when the resource base is local—hashes a bounded resource-directory closure. It can then compare that runtime observation with hashes pinned by a trusted source artifact and write a deterministic content-addressed receipt.
 
-This is deliberately not another skill package format, dependency resolver, installer, registry, or evaluator. Use tools such as pack-agent for packaging and distribution; use this plugin for the missing last hop between a fixed source artifact and the effective capability inside DSH.
+This is deliberately not another skill package format, dependency resolver, installer, registry, evaluator, per-turn summary, or event audit ledger. Use [pack-agent](https://github.com/sakikoTGW/pack-agent) for packaging and distribution; use this plugin for the missing last hop between a fixed source artifact and the effective capability inside DSH.
 
 ## DSH tools
 
 - `dsh_capability_receipt_inspect`: returns structural fields and hashes without returning skill instructions, metadata, or absolute paths.
 - `dsh_capability_receipt_issue`: requires `expectedContentSha256`, accepts optional resource/provider/source/invocation expectations, and writes only beneath an explicit workspace-relative `artifactDir`.
+- `dsh_capability_receipt_issue_from_pack`: reads a workspace-relative pack-agent `agent-pack/lock/v1`, recomputes pack-agent's directory and portable-bundle skill hashes, requires the effective DSH body to equal the locked `SKILL.md` body, checks optional provider/source/invocation expectations, and writes the same receipt format.
 
 The plugin observes but never executes the target capability. A receipt fails closed when the DSH catalog is incomplete or changes during observation, when the loaded definition disagrees with its catalog entry, when an expectation mismatches, or when resources cannot be safely closed.
+
+## pack-agent bridge
+
+After pack-agent has exported/installed a pack, issue a receipt against its lock without translating it into another manifest:
+
+```text
+pack-agent .agent-pack/lock.json
+          │ skill contentHash + fileCount
+          ▼
+dsh_capability_receipt_issue_from_pack
+          │ recompute pack-agent hash + compare loaded SKILL.md body
+          ▼
+content-addressed DSH runtime receipt
+```
+
+Required inputs are `skillName`, `packLockPath`, and `artifactDir`. The lock's `ref` and `lockedAt` are not copied into the receipt. The bridge currently pins the hash contract observed at pack-agent commit `e2db1f8f56b74b64597a01175c810358f2c0b450`; the fixture records the exact upstream Git blobs. Both directory-source and portable-bundle path forms are recognized, and the matched form is explicit in `verification.matchedHashMode`.
 
 ## Install in DSH
 
@@ -52,4 +69,4 @@ Requires Node.js 22 or newer. No install lifecycle scripts are used.
 
 ## Security boundary
 
-A verified receipt proves equality with caller-supplied expectations at one DSH runtime observation. It does not prove that the source artifact is trustworthy, that the skill is useful or safe, that the capability was executed, or that external model/tool behavior was correct. Pin trusted source commits and preserve their review/evaluation evidence separately.
+A verified receipt proves equality with caller-supplied expectations or one pack-agent lock at one DSH runtime observation. A pack lock is evidence input, not a signature or trust anchor: the bridge verifies its equality to runtime files and the effective body, but does not prove who produced the lock. It also does not prove that the skill is useful or safe, that the capability was executed, or that external model/tool behavior was correct. Pin trusted source commits and preserve their review/evaluation evidence separately.

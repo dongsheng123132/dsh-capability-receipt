@@ -1,5 +1,9 @@
 import { defineTool } from '@deepseek-ai/dsh-tools'
-import { inspectRegistryCapability, issueRegistryCapabilityReceipt } from './lib/capability-receipt.mjs'
+import {
+  inspectRegistryCapability,
+  issueRegistryCapabilityReceipt,
+  issueRegistryCapabilityReceiptFromPack
+} from './lib/capability-receipt.mjs'
 
 export const name = 'dsh-capability-receipt'
 export const inject = ['tools', 'skills']
@@ -56,6 +60,35 @@ export function createDefinitions(ctx, config = {}) {
           expected: {
             contentSha256: args.expectedContentSha256,
             resourceClosureSha256: args.expectedResourceClosureSha256,
+            provider: args.expectedProvider,
+            source: args.expectedSource,
+            modelInvocable: args.expectedModelInvocable,
+            userInvocable: args.expectedUserInvocable
+          }
+        })
+      }
+    }),
+    defineTool({
+      name: 'dsh_capability_receipt_issue_from_pack',
+      description: 'Verify the effective DSH skill against a workspace-local pack-agent agent-pack/lock/v1 entry. Recomputes the exact pack-agent directory and portable-bundle hashes, requires the loaded body to equal the locked SKILL.md body, and writes one deterministic receipt. Does not install or execute the capability.',
+      parameters: {
+        skillName: { type: 'string', required: true, description: 'Exact DSH skill name and pack-agent lock component key.' },
+        cwd: { type: 'string', description: 'Optional workspace-relative DSH lookup directory.' },
+        packLockPath: { type: 'string', required: true, description: 'pack-agent agent-pack/lock/v1 JSON file relative to workspaceRoot.' },
+        artifactDir: { type: 'string', required: true, description: 'Only directory that may be written, relative to workspaceRoot.' },
+        expectedProvider: { type: 'string', description: 'Expected winning DSH skill provider.' },
+        expectedSource: { type: 'string', description: 'Expected winning DSH skill source.' },
+        expectedModelInvocable: { type: 'boolean', description: 'Expected model invocation policy.' },
+        expectedUserInvocable: { type: 'boolean', description: 'Expected user invocation policy.' }
+      },
+      output: { schema: { type: 'json' }, render: renderJson },
+      execute(args) {
+        return issueRegistryCapabilityReceiptFromPack({
+          registry: ctx.skills,
+          ...base(config, args),
+          packLockPath: args.packLockPath,
+          artifactDir: args.artifactDir,
+          expected: {
             provider: args.expectedProvider,
             source: args.expectedSource,
             modelInvocable: args.expectedModelInvocable,

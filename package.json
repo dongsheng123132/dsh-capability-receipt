@@ -1,6 +1,6 @@
 {
   "name": "dsh-capability-receipt",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Content-addressed receipts for skills actually loaded by DeepSeek Harness",
   "license": "MIT",
   "type": "module",

@@ -6,6 +6,7 @@ const definitions = createDefinitions({ skills: registry }, { workspaceRoot: pro
 assert.deepEqual(inject, ['tools', 'skills'])
 assert.deepEqual(definitions.map(({ name }) => name), [
   'dsh_capability_receipt_inspect',
-  'dsh_capability_receipt_issue'
+  'dsh_capability_receipt_issue',
+  'dsh_capability_receipt_issue_from_pack'
 ])
 process.stdout.write(`${JSON.stringify({ ok: true, inject, tools: definitions.map(({ name }) => name) })}\n`)

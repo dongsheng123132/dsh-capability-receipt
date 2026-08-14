@@ -2,14 +2,31 @@
 
 `dsh-capability-receipt` 用来证明 DeepSeek Harness **实际加载了哪份 skill**。它对 `ctx.skills.get()` 返回的有效指令正文做哈希，记录胜出的 provider、source 与调用策略；如果资源基址是本地目录，还会在严格限额下计算资源闭包哈希。随后，它可以把这次运行时观察与可信来源预先固定的哈希进行比对，并写出确定性的内容寻址收据。
 
-它刻意不再发明 skill 包格式、依赖解析器、安装器、注册表或评测器。包与分发应复用 pack-agent 等现有方案；本插件只补「固定来源产物」到「DSH 内实际生效能力」之间缺失的最后一跳。
+它刻意不再发明 skill 包格式、依赖解析器、安装器、注册表、评测器、逐轮摘要或事件审计账本。包与分发应复用 [pack-agent](https://github.com/sakikoTGW/pack-agent)；本插件只补「固定来源产物」到「DSH 内实际生效能力」之间缺失的最后一跳。
 
 ## DSH 工具
 
 - `dsh_capability_receipt_inspect`：只返回结构字段与哈希，不返回 skill 指令正文、元数据或绝对路径。
 - `dsh_capability_receipt_issue`：必须提供 `expectedContentSha256`，可选比对资源闭包、provider、source 与调用策略，只能向显式指定的工作区相对 `artifactDir` 写收据。
+- `dsh_capability_receipt_issue_from_pack`：读取工作区相对的 pack-agent `agent-pack/lock/v1`，按 pack-agent 原算法重算目录来源和 portable bundle 两种 skill 哈希，要求 DSH 有效正文等于锁定 `SKILL.md` 去 frontmatter 后的正文，再核验可选 provider/source/调用策略并写出同一收据格式。
 
 插件只观察，绝不执行目标能力。出现以下情况会闭门失败：DSH 目录不完整、观察期间目录变化、加载定义与目录条目不一致、任一期望不匹配，或资源无法安全闭包。
+
+## pack-agent 桥接
+
+pack-agent 完成 export/install 后，直接用它的 lock 签发收据，不翻译成第二套 manifest：
+
+```text
+pack-agent .agent-pack/lock.json
+          │ skill contentHash + fileCount
+          ▼
+dsh_capability_receipt_issue_from_pack
+          │ 重算 pack-agent hash + 比对已加载 SKILL.md 正文
+          ▼
+内容寻址的 DSH 运行时收据
+```
+
+必填输入为 `skillName`、`packLockPath` 和 `artifactDir`。lock 中的 `ref` 与 `lockedAt` 不会进入收据。当前桥接固定兼容 pack-agent commit `e2db1f8f56b74b64597a01175c810358f2c0b450` 观察到的哈希契约，fixture 记录了对应 upstream Git blob。目录来源与 portable bundle 的路径形式都能识别，实际命中的形式会明确写入 `verification.matchedHashMode`。
 
 ## 安装到 DSH
 
@@ -52,4 +69,4 @@ DSH_CHECKOUT=/path/to/deepseek-harness npm run smoke:dsh
 
 ## 证明边界
 
-`verified` 收据只证明：在某次 DSH 运行时观察中，有效能力与调用者提供的固定期望相等。它不证明来源本身可信、skill 有用或安全、能力已经执行，也不证明外部模型或工具行为正确。来源提交、代码审查和评测证据仍需另行固定和保存。
+`verified` 收据只证明：在某次 DSH 运行时观察中，有效能力与调用者提供的固定期望或某份 pack-agent lock 相等。pack lock 是证据输入，不是签名或信任锚；桥接会核验它与运行时文件及有效正文相等，但不证明是谁生成了 lock。它也不证明 skill 有用或安全、能力已经执行，或外部模型/工具行为正确。来源提交、代码审查和评测证据仍需另行固定和保存。

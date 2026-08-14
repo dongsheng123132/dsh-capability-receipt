@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/sakikoTGW/pack-agent",
+  "revision": "e2db1f8f56b74b64597a01175c810358f2c0b450",
+  "license": "MIT",
+  "lockSchema": "agent-pack/lock/v1",
+  "sources": [
+    {
+      "path": "src/lock.ts",
+      "blobSha": "4ca5b50696df29a6b9173c690971189769b22f74"
+    },
+    {
+      "path": "src/versioning.ts",
+      "blobSha": "2a329b0d852e404ce3ba928dfac6feeb6583be13"
+    },
+    {
+      "path": "docs/PACK_SPEC.md",
+      "blobSha": "1da397602e510657999363126ada3b95754772c5"
+    }
+  ],
+  "note": "The fixture copies the public lock field contract and independently pins the observed upstream revision; it does not import pack-agent runtime code."
+}

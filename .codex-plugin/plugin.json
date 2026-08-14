@@ -1,0 +1,19 @@
+{
+  "name": "dsh-capability-receipt",
+  "version": "0.1.0",
+  "description": "Content-addressed receipts for skills actually loaded by DeepSeek Harness",
+  "author": { "name": "hfshfg" },
+  "interface": {
+    "displayName": "DSH Capability Receipt",
+    "shortDescription": "Prove which skill DSH actually loaded.",
+    "longDescription": "Observes the winning DeepSeek Harness skill definition at runtime, hashes its effective instruction body and bounded local resource closure, checks pinned expectations, and writes a deterministic content-addressed receipt without disclosing source text or absolute paths.",
+    "developerName": "hfshfg",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Runtime skill identity",
+      "Bounded resource closure",
+      "Content-addressed verification receipts"
+    ],
+    "defaultPrompt": "Inspect the effective DSH skill, then issue a receipt against hashes pinned by its trusted source artifact."
+  }
+}

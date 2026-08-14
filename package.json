@@ -1,0 +1,58 @@
+{
+  "name": "dsh-capability-receipt",
+  "version": "0.1.0",
+  "description": "Content-addressed receipts for skills actually loaded by DeepSeek Harness",
+  "license": "MIT",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./receipt": "./lib/capability-receipt.mjs"
+  },
+  "bin": {
+    "dsh-capability-receipt": "./bin/dsh-capability-receipt.mjs"
+  },
+  "files": [
+    ".codex-plugin/",
+    "bin/",
+    "cordis.patch.yml",
+    "index.js",
+    "lib/",
+    "LICENSE",
+    "README.md",
+    "README.zh-CN.md"
+  ],
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "*"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-tools": { "optional": true }
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "0.0.1-rc.1"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "node scripts/check.mjs",
+    "smoke:plugin": "node test/plugin-smoke.mjs",
+    "smoke:dsh": "node test/dsh-runtime-smoke.mjs"
+  },
+  "engines": { "node": ">=22" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dongsheng123132/dsh-capability-receipt.git"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "skill",
+    "capability",
+    "attestation",
+    "receipt",
+    "sha256"
+  ]
+}

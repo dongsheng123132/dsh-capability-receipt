@@ -1,5 +1,10 @@
 # dsh-capability-receipt
 
+[![CI](https://github.com/dongsheng123132/dsh-capability-receipt/actions/workflows/ci.yml/badge.svg)](https://github.com/dongsheng123132/dsh-capability-receipt/actions/workflows/ci.yml)
+[![MIT 许可证](https://img.shields.io/github/license/dongsheng123132/dsh-capability-receipt)](LICENSE)
+[![Node.js 22+](https://img.shields.io/badge/Node.js-%E2%89%A522-339933?logo=nodedotjs&logoColor=white)](package.json)
+[![Awesome DSH Plugins](https://img.shields.io/badge/Awesome_DSH-%E5%B7%B2%E9%AA%8C%E8%AF%81%E5%AE%9E%E9%AA%8C-0969da)](https://github.com/dongsheng123132/awesome-dsh-plugins/blob/main/README.zh-CN.md#2origin-%E6%8F%92%E4%BB%B6%E5%AE%9E%E9%AA%8C%E5%AE%A4)
+
 `dsh-capability-receipt` 用来证明 DeepSeek Harness **实际加载了哪份 skill**。它对 `ctx.skills.get()` 返回的有效指令正文做哈希，记录胜出的 provider、source 与调用策略；如果资源基址是本地目录，还会在严格限额下计算资源闭包哈希。随后，它可以把这次运行时观察与可信来源预先固定的哈希进行比对，并写出确定性的内容寻址收据。
 
 它刻意不再发明 skill 包格式、依赖解析器、安装器、注册表、评测器、逐轮摘要或事件审计账本。包与分发应复用 [pack-agent](https://github.com/sakikoTGW/pack-agent)；本插件只补「固定来源产物」到「DSH 内实际生效能力」之间缺失的最后一跳。

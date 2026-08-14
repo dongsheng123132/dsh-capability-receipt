@@ -1,5 +1,10 @@
 # dsh-capability-receipt
 
+[![CI](https://github.com/dongsheng123132/dsh-capability-receipt/actions/workflows/ci.yml/badge.svg)](https://github.com/dongsheng123132/dsh-capability-receipt/actions/workflows/ci.yml)
+[![MIT license](https://img.shields.io/github/license/dongsheng123132/dsh-capability-receipt)](LICENSE)
+[![Node.js 22+](https://img.shields.io/badge/Node.js-%E2%89%A522-339933?logo=nodedotjs&logoColor=white)](package.json)
+[![Awesome DSH Plugins](https://img.shields.io/badge/Awesome_DSH-verified_lab-0969da)](https://github.com/dongsheng123132/awesome-dsh-plugins#2origin-plugin-lab)
+
 `dsh-capability-receipt` proves which skill DeepSeek Harness actually loaded. It hashes the effective instruction body returned by `ctx.skills.get()`, records the winning provider/source/invocation policy, and—when the resource base is local—hashes a bounded resource-directory closure. It can then compare that runtime observation with hashes pinned by a trusted source artifact and write a deterministic content-addressed receipt.
 
 This is deliberately not another skill package format, dependency resolver, installer, registry, evaluator, per-turn summary, or event audit ledger. Use [pack-agent](https://github.com/sakikoTGW/pack-agent) for packaging and distribution; use this plugin for the missing last hop between a fixed source artifact and the effective capability inside DSH.

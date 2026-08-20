@@ -1,6 +1,6 @@
 {
   "name": "dsh-capability-receipt",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Content-addressed receipts for skills actually loaded by DeepSeek Harness",
   "license": "MIT",
   "type": "module",
@@ -14,31 +14,27 @@
   },
   "files": [
     ".codex-plugin/",
+    ".mcp.json",
     "bin/",
     "cordis.patch.yml",
     "index.js",
     "lib/",
     "LICENSE",
+    "mcp-server.mjs",
     "README.md",
-    "README.zh-CN.md"
+    "README.zh-CN.md",
+    "SECURITY.md"
   ],
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" }
   },
-  "peerDependencies": {
-    "@deepseek-ai/dsh-tools": "*"
-  },
-  "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-tools": { "optional": true }
-  },
-  "devDependencies": {
-    "@deepseek-ai/dsh-tools": "0.0.1-rc.1"
-  },
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "check": "node scripts/check.mjs",
+    "smoke:mcp": "node test/mcp-smoke.mjs",
     "smoke:plugin": "node test/plugin-smoke.mjs",
-    "smoke:dsh": "node test/dsh-runtime-smoke.mjs"
+    "smoke:dsh": "node test/dsh-runtime-smoke.mjs",
+    "smoke:stock-web": "node test/stock-web-loader-smoke.mjs"
   },
   "engines": { "node": ">=22" },
   "repository": {

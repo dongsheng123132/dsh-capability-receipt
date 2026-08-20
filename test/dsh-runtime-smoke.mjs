@@ -97,6 +97,8 @@ try {
   })
   assert.equal(issued.isError, false)
   assert.equal(issued.value.ok, true)
+  assert.equal(issued.value.artifact.verifiedByReadBack, true)
+  assert(issued.value.artifact.bytes > 0)
 
   const issuedFromPack = await tools.execute({
     signal,
@@ -114,6 +116,7 @@ try {
   })
   assert.equal(issuedFromPack.isError, false)
   assert.equal(issuedFromPack.value.ok, true)
+  assert.equal(issuedFromPack.value.artifact.verifiedByReadBack, true)
   assert.equal(issuedFromPack.value.pack.matchedHashMode, 'directory')
   process.stdout.write(`${JSON.stringify({
     ok: true,

@@ -1,4 +1,3 @@
-import { defineTool } from '@deepseek-ai/dsh-tools'
 import {
   inspectRegistryCapability,
   issueRegistryCapabilityReceipt,
@@ -9,6 +8,29 @@ export const name = 'dsh-capability-receipt'
 export const inject = ['tools', 'skills']
 
 const renderJson = (_args, value) => [{ type: 'text', text: JSON.stringify(value, null, 2) }]
+
+function defineJsonTool({ name, description, parameters, execute }) {
+  const properties = Object.fromEntries(Object.entries(parameters).map(([key, value]) => [key, {
+    type: value.type,
+    description: value.description
+  }]))
+  const required = Object.entries(parameters).filter(([, value]) => value.required).map(([key]) => key)
+  return {
+    name,
+    description,
+    parameters: { type: 'object', properties, required, additionalProperties: false },
+    output: { schema: {}, render: renderJson },
+    execute(args) {
+      if (!args || typeof args !== 'object' || Array.isArray(args)) throw new TypeError('arguments must be an object')
+      for (const [key, value] of Object.entries(parameters)) {
+        if (value.required && (args[key] === undefined || args[key] === null || args[key] === '')) throw new TypeError(`${key} is required`)
+        if (args[key] !== undefined && typeof args[key] !== value.type) throw new TypeError(`${key} must be ${value.type}`)
+      }
+      for (const key of Object.keys(args)) if (!(key in parameters)) throw new TypeError(`unknown argument: ${key}`)
+      return execute(args)
+    }
+  }
+}
 
 function base(config, args) {
   return {
@@ -25,7 +47,7 @@ function base(config, args) {
 
 export function createDefinitions(ctx, config = {}) {
   return [
-    defineTool({
+    defineJsonTool({
       name: 'dsh_capability_receipt_inspect',
       description: 'Inspect the winning skill definition actually loaded by DSH. Returns hashes and structural policy only; never returns the skill body, metadata, or absolute paths.',
       parameters: {
@@ -37,7 +59,7 @@ export function createDefinitions(ctx, config = {}) {
         return inspectRegistryCapability({ registry: ctx.skills, ...base(config, args) })
       }
     }),
-    defineTool({
+    defineJsonTool({
       name: 'dsh_capability_receipt_issue',
       description: 'Compare the effective DSH skill with a pinned content hash and optional source, provider, invocation, and resource-closure expectations; write one deterministic receipt inside artifactDir. Does not execute the capability.',
       parameters: {
@@ -68,7 +90,7 @@ export function createDefinitions(ctx, config = {}) {
         })
       }
     }),
-    defineTool({
+    defineJsonTool({
       name: 'dsh_capability_receipt_issue_from_pack',
       description: 'Verify the effective DSH skill against a workspace-local pack-agent agent-pack/lock/v1 entry. Recomputes the exact pack-agent directory and portable-bundle hashes, requires the loaded body to equal the locked SKILL.md body, and writes one deterministic receipt. Does not install or execute the capability.',
       parameters: {
@@ -103,5 +125,3 @@ export function createDefinitions(ctx, config = {}) {
 export function apply(ctx, config = {}) {
   for (const definition of createDefinitions(ctx, config)) ctx.tools.register(definition)
 }
-
-export default apply

@@ -1,8 +1,9 @@
 {
   "name": "dsh-capability-receipt",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Content-addressed receipts for skills actually loaded by DeepSeek Harness",
   "author": { "name": "hfshfg" },
+  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "DSH Capability Receipt",
     "shortDescription": "Prove which skill DSH actually loaded.",
@@ -15,6 +16,6 @@
       "Content-addressed verification receipts",
       "pack-agent lock compatibility"
     ],
-    "defaultPrompt": "Inspect the effective DSH skill, then issue a receipt against hashes pinned by its trusted source artifact."
+    "defaultPrompt": ["Inspect the effective DSH skill, then issue a receipt against hashes pinned by its trusted source artifact."]
   }
 }

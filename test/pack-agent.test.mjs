@@ -8,7 +8,9 @@ import {
   buildPackAgentCapabilityReceipt,
   inspectRegistryCapability,
   issueRegistryCapabilityReceiptFromPack,
+  inspectPackAgentLockJson,
   loadPackAgentExpectation,
+  verifyRecordedPackCapability,
   verifyCapabilityReceiptFile
 } from '../lib/capability-receipt.mjs'
 
@@ -61,6 +63,23 @@ test('maps the pinned pack-agent lock contract without importing ref or lockedAt
   const provenance = JSON.parse(await readFile(join(fixtures, 'pack-agent-upstream.json'), 'utf8'))
   assert.equal(provenance.revision, 'e2db1f8f56b74b64597a01175c810358f2c0b450')
   assert.equal(provenance.lockSchema, expectation.schema)
+})
+
+test('inspects and verifies inline recorded evidence without filesystem access', async () => {
+  const lockJson = await readFile(join(fixtures, 'pack-agent-project', '.agent-pack', 'lock.json'), 'utf8')
+  const expectation = inspectPackAgentLockJson(lockJson, 'runtime-proof')
+  const verdict = verifyRecordedPackCapability({
+    lockJson,
+    skillName: 'runtime-proof',
+    observedContentSha256: '62db611d8dbf9ed5260d24bfc4692cfc4fe6c540654934e74aa7dcdf6e5de808',
+    skillFileBodySha256: '62db611d8dbf9ed5260d24bfc4692cfc4fe6c540654934e74aa7dcdf6e5de808',
+    directoryContentHash: expectation.skillContentHash,
+    bundleContentHash: `sha256:${'0'.repeat(64)}`,
+    fileCount: expectation.skillFileCount
+  })
+  assert.equal(verdict.verification.status, 'verified')
+  assert.equal(verdict.verification.matchedHashMode, 'directory')
+  assert.equal(verdict.disclosure.filesystemAccess, false)
 })
 
 test('recomputes both upstream hash modes and binds the DSH body to locked SKILL.md', async () => {

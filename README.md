@@ -9,6 +9,8 @@
 
 This is deliberately not another skill package format, dependency resolver, installer, registry, evaluator, per-turn summary, or event audit ledger. Use [pack-agent](https://github.com/sakikoTGW/pack-agent) for packaging and distribution; use this plugin for the missing last hop between a fixed source artifact and the effective capability inside DSH.
 
+Version 0.3.0 is host-neutral: the DSH entry does not import a private ToolRuntime helper and exposes no default export, so the stock Cordis loader preserves the module-level `inject = ['tools', 'skills']` contract in the built `web` profile.
+
 ## DSH tools
 
 - `dsh_capability_receipt_inspect`: returns structural fields and hashes without returning skill instructions, metadata, or absolute paths.
@@ -16,6 +18,15 @@ This is deliberately not another skill package format, dependency resolver, inst
 - `dsh_capability_receipt_issue_from_pack`: reads a workspace-relative pack-agent `agent-pack/lock/v1`, recomputes pack-agent's directory and portable-bundle skill hashes, requires the effective DSH body to equal the locked `SKILL.md` body, checks optional provider/source/invocation expectations, and writes the same receipt format.
 
 The plugin observes but never executes the target capability. A receipt fails closed when the DSH catalog is incomplete or changes during observation, when the loaded definition disagrees with its catalog entry, when an expectation mismatches, or when resources cannot be safely closed.
+
+## MCP proof surface
+
+The formal `.mcp.json` declaration exposes two stdio tools:
+
+- `capability_receipt_inspect_lock` parses one explicit inline pack-agent lock and returns only identities and hashes.
+- `capability_receipt_verify_recorded` compares an explicit recorded DSH content/resource digest envelope with that lock and returns a content-addressed verdict.
+
+This MCP surface is intentionally proof-only and in-memory. It cannot inspect the live DSH registry, read files, access the network, execute a capability, or write a receipt. Live observation and artifact issuance remain DSH ToolRuntime responsibilities, sharing the same core verifier.
 
 ## pack-agent bridge
 
@@ -67,6 +78,7 @@ npm install
 npm test
 npm run check
 npm run smoke:plugin
+npm run smoke:mcp
 DSH_CHECKOUT=/path/to/deepseek-harness npm run smoke:dsh
 ```
 

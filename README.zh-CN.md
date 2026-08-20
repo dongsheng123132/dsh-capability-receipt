@@ -9,6 +9,8 @@
 
 它刻意不再发明 skill 包格式、依赖解析器、安装器、注册表、评测器、逐轮摘要或事件审计账本。包与分发应复用 [pack-agent](https://github.com/sakikoTGW/pack-agent)；本插件只补「固定来源产物」到「DSH 内实际生效能力」之间缺失的最后一跳。
 
+v0.3.0 的 DSH 入口已经宿主中立：不导入 ToolRuntime 私有辅助包，也不暴露默认导出，因此官方 `web` profile 的 Cordis Loader 会保留模块级 `inject = ['tools', 'skills']` 契约。
+
 ## DSH 工具
 
 - `dsh_capability_receipt_inspect`：只返回结构字段与哈希，不返回 skill 指令正文、元数据或绝对路径。
@@ -16,6 +18,15 @@
 - `dsh_capability_receipt_issue_from_pack`：读取工作区相对的 pack-agent `agent-pack/lock/v1`，按 pack-agent 原算法重算目录来源和 portable bundle 两种 skill 哈希，要求 DSH 有效正文等于锁定 `SKILL.md` 去 frontmatter 后的正文，再核验可选 provider/source/调用策略并写出同一收据格式。
 
 插件只观察，绝不执行目标能力。出现以下情况会闭门失败：DSH 目录不完整、观察期间目录变化、加载定义与目录条目不一致、任一期望不匹配，或资源无法安全闭包。
+
+## MCP 证明表面
+
+正式 `.mcp.json` 声明提供两个 stdio 工具：
+
+- `capability_receipt_inspect_lock`：解析显式内联的 pack-agent lock，只返回身份与哈希。
+- `capability_receipt_verify_recorded`：把显式录制的 DSH 内容/资源摘要信封与 lock 比对，返回内容寻址判决。
+
+MCP 表面刻意保持纯内存、只证明：不能查看 DSH 实时注册表、读文件、联网、执行能力或写收据。实时观察与产物签发仍由 DSH ToolRuntime 工具完成，两种表面共用同一核心核验器。
 
 ## pack-agent 桥接
 
@@ -67,6 +78,7 @@ npm install
 npm test
 npm run check
 npm run smoke:plugin
+npm run smoke:mcp
 DSH_CHECKOUT=/path/to/deepseek-harness npm run smoke:dsh
 ```
 

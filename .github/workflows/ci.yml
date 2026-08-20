@@ -20,4 +20,5 @@ jobs:
       - run: npm test
       - run: npm run check
       - run: npm run smoke:plugin
+      - run: npm run smoke:mcp
       - run: npm audit --omit=dev

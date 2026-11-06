@@ -1,6 +1,6 @@
 # dsh-capability-receipt
 
-**Maintainer / Author：贺去病 (He Fangsheng / Dosen) · [hequbing.com](https://www.hequbing.com)**
+**Maintainer / Author：He Fangsheng (贺方升 / 贺去病; Dosen) · [hequbing.com](https://www.hequbing.com)**
 
 [![CI](https://github.com/dongsheng123132/dsh-capability-receipt/actions/workflows/ci.yml/badge.svg)](https://github.com/dongsheng123132/dsh-capability-receipt/actions/workflows/ci.yml)
 [![MIT license](https://img.shields.io/github/license/dongsheng123132/dsh-capability-receipt)](LICENSE)
